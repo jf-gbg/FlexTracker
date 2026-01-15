@@ -37,12 +37,13 @@ Single-user only for Phase 1.
 ### Lunch
 
 * Lunch is **unpaid**
-* Lunch duration is **flexible** and manually entered
+* Lunch is **optional** and entered as an interval: lunch start time and lunch end time
+* The system derives lunch minutes as (lunch end − lunch start) when lunch is provided
 * No fixed lunch window is assumed
 
 ### Flex calculation
 
-* Worked time = (end time − start time) − unpaid lunch
+* Worked time = (end time − start time) − lunch duration, where lunch duration = (lunch end − lunch start) when provided, otherwise 0
 * Weekly flex delta = worked time − expected time
 * Flex balance carries over week to week
 
@@ -50,7 +51,9 @@ Single-user only for Phase 1.
 
 * Start time and end time are manually entered
 * End time must be after start time
-* Lunch duration must be ≥ 0
+* Lunch is optional but must be provided as a pair (both lunch start and lunch end)
+* Lunch end must be after lunch start
+* Lunch interval must be within work interval (start ≤ lunch start < lunch end ≤ end)
 * Overlapping entries are allowed but flagged with a warning
 
 ### Adjustments
@@ -89,7 +92,9 @@ Deliverable: one working vertical slice (UI → API → DB → UI).
 
 * Enter start time
 * Enter end time
-* Enter unpaid lunch duration
+* Enter lunch start time (optional)
+* Enter lunch end time (optional)
+* System shows derived lunch minutes and worked time for the entry
 * Optional comment
 * Validation with clear error messages
 
