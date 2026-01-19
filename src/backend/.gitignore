@@ -1,3 +1,78 @@
-# JetBrains IDE files
+# Ignore build outputs
+/bin/
+/obj/
+
+# Visual Studio / .NET files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# NuGet
+/packages/
+/*.nupkg
+project.lock.json
+project.fragment.lock.json
+project.assets.json
+
+# MSBuild binary log
+*.binlog
+
+# Test results and coverage
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.info
+*.lcov
+
+# Rider / IntelliJ
 /.idea/
 /*.iml
+/.idea_modules/
+/out/
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# NCrunch
+_NCrunch_*
+*.ncrunchsolution
+*.ncrunchproj
+
+# DotCover
+*.dotCover
+
+# Rider/IDE caches and local settings
+.idea/
+.idea/*workspace.xml
+.idea/*tasks.xml
+
+# User secrets and local settings
+secrets.json
+local.settings.json
+
+# SonarQube
+.sonar/
+
+# EF Core Migrations snapshot build
+Migrations/**/Snapshot/**
+
+# Optional: VS Code settings
+.vscode/
+
+# Logs, temp files
+*.log
+*.tmp
+*.temp
+
+# Ignore package directories that may appear in some projects
+node_modules/
+wwwroot/lib/
+
+# Ignore publish output
+publish/
+*/publish/
