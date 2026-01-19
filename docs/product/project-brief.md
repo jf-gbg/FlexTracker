@@ -37,8 +37,8 @@ Single-user only for Phase 1.
 ### Lunch
 
 * Lunch is **unpaid**
-* Lunch is **optional** and entered as an interval: lunch start time and lunch end time
-* The system derives lunch minutes as (lunch end − lunch start) when lunch is provided
+* Lunch is entered as an **optional interval**: lunch start time (HH:MM) and lunch end time (HH:MM)
+* The system derives lunch minutes as **(lunch end − lunch start)** when lunch is provided
 * No fixed lunch window is assumed
 
 ### Flex calculation
@@ -97,6 +97,7 @@ Deliverable: one working vertical slice (UI → API → DB → UI).
 * System shows derived lunch minutes and worked time for the entry
 * Optional comment
 * Validation with clear error messages
+* System shows derived lunch minutes and worked time for the entry
 
 Acceptance criteria:
 
