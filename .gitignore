@@ -7,7 +7,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
-# Build results
+# Build outputs
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -22,33 +22,84 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+publish/
+*/publish/
 
-# .NET Core
+# .NET artifacts
 project.lock.json
 project.fragment.lock.json
+project.assets.json
 artifacts/
 
-# ASP.NET Scaffolding
+# ASP.NET scaffolding
 ScaffoldingReadMe.txt
 
-# NuGet Packages
+# NuGet
 *.nupkg
-# NuGet Symbol Packages
 *.snupkg
+/packages/
 
-# Others
-~$*
-*~
-CodeCoverage/
+# IDEs and editors
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+.idea/
+/*.iml
+/.idea_modules/
+/out/
+.idea/*workspace.xml
+.idea/*tasks.xml
+.vscode/
 
-# MSBuild Binary and Structured Log
-*.binlog
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
 
-# MSTest test Results
+# NCrunch
+_NCrunch_*
+*.ncrunchsolution
+*.ncrunchproj
+
+# DotCover
+*.dotCover
+
+# Test results and coverage
+TestResults/
 [Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
-
-# NUnit
+*.trx
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.info
+*.lcov
+CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+[Bb]uild[Ll]og.*
+
+# MSBuild binary and structured log
+*.binlog
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+~$*
+*~
+
+# Node/web assets
+node_modules/
+wwwroot/lib/
+
+# Secrets and local settings
+secrets.json
+local.settings.json
+
+# SonarQube
+.sonar/
+
+# EF Core migrations snapshot build
+Migrations/**/Snapshot/**
