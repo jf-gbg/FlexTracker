@@ -76,3 +76,8 @@ wwwroot/lib/
 # Ignore publish output
 publish/
 */publish/
+
+# Databases
+data/*.db
+data/*.db-shm
+data/*.db-wal
