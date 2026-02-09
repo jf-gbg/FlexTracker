@@ -26,7 +26,7 @@ Backend must enforce validation and calculation rules close to the domain.
 - `endTime` (required)
 - `lunchStartTime` (optional)
 - `lunchEndTime` (optional)
-- `comment` (optional)
+- `comment` (optional, planned; not yet implemented in the initial schema/model)
 - Manual adjustments exist as a later epic; don’t design away history.
 
 ### Validation rules
