@@ -2,7 +2,7 @@
 
 This file describes how to work in the **backend** of FlexTracker: architecture boundaries, domain rules, and expected engineering practices.
 
-Source of truth for product/domain rules: `project-brief.md`. :contentReference[oaicite:0]{index=0}
+Source of truth for product/domain rules: `../../docs/product/project-brief.md`.
 
 ---
 
@@ -14,7 +14,7 @@ Deliver a trustworthy, admin-style time tracking API that supports:
 - Deterministic worked-minutes calculations
 - Weekly totals and flex balance (later epics)
 
-Backend must enforce validation and calculation rules close to the domain. :contentReference[oaicite:1]{index=1}
+Backend must enforce validation and calculation rules close to the domain.
 
 ---
 
@@ -27,7 +27,7 @@ Backend must enforce validation and calculation rules close to the domain. :cont
 - `lunchStartTime` (optional)
 - `lunchEndTime` (optional)
 - `comment` (optional)
-- Manual adjustments exist as a later epic; don’t design away history. :contentReference[oaicite:2]{index=2}
+- Manual adjustments exist as a later epic; don’t design away history.
 
 ### Validation rules
 Reject invalid ranges:
@@ -37,12 +37,12 @@ Reject invalid ranges:
 - `lunchEndTime` must be after `lunchStartTime`
 - Lunch must be within work interval:
   - `startTime ≤ lunchStartTime < lunchEndTime ≤ endTime`
-- Overlapping entries are allowed but must be **flagged with a warning**, not rejected. :contentReference[oaicite:3]{index=3}
+- Overlapping entries are allowed but must be **flagged with a warning**, not rejected.
 
 ### Calculations
 - `lunchMinutes = lunchEnd - lunchStart` when lunch provided, else `0`
 - `workedMinutes = (end - start) - lunchMinutes`
-- Weekly flex delta and balance carry-over are later epics but must remain deterministic when implemented. :contentReference[oaicite:4]{index=4}
+- Weekly flex delta and balance carry-over are later epics but must remain deterministic when implemented.
 
 ---
 
@@ -99,9 +99,9 @@ At minimum:
 ## Changes Codex should NOT do without explicit request
 
 - Don’t introduce complex frameworks/patterns (CQRS libraries, MediatR, event sourcing, etc.)
-- Don’t add authentication/multi-user support (Phase 1 is single-user). :contentReference[oaicite:5]{index=5}
-- Don’t assume fixed lunch window or fixed lunch minutes. :contentReference[oaicite:6]{index=6}
-- Don’t reject overlapping entries; only warn. :contentReference[oaicite:7]{index=7}
+- Don’t add authentication/multi-user support (Phase 1 is single-user).
+- Don’t assume fixed lunch window or fixed lunch minutes.
+- Don’t reject overlapping entries; only warn.
 
 ---
 
@@ -109,7 +109,7 @@ At minimum:
 
 - Prefer explicit, readable code over clever abstractions.
 - Keep domain methods side-effect free where possible (pure calculations).
-- Use clear names that match the brief (workday/time entry/lunch interval/flex). :contentReference[oaicite:8]{index=8}
+- Use clear names that match the brief (workday/time entry/lunch interval/flex).
 
 ---
 
@@ -119,4 +119,4 @@ A change is “done” when:
 - Validation rules are enforced consistently
 - Calculation logic is covered by tests
 - API returns clear error messages for invalid requests
-- Behavior matches `project-brief.md` rules. :contentReference[oaicite:9]{index=9}
+- Behavior matches `../../docs/product/project-brief.md` rules.
