@@ -8,11 +8,12 @@ public sealed class TimeEntryConfiguration : IEntityTypeConfiguration<TimeEntryD
 {
     public void Configure(EntityTypeBuilder<TimeEntryDbo> builder)
     {
+        builder.ToTable("TimeEntries");
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Date);
-        builder.Property(x => x.StartTime);
-        builder.Property(x => x.EndTime);
-        builder.Property(x => x.LunchStartTime);
-        builder.Property(x => x.LunchEndTime);
+        builder.Property(x => x.Date).HasColumnType("TEXT");
+        builder.Property(x => x.StartTime).HasColumnType("TEXT");
+        builder.Property(x => x.EndTime).HasColumnType("TEXT");
+        builder.Property(x => x.LunchStartTime).HasColumnType("TEXT");
+        builder.Property(x => x.LunchEndTime).HasColumnType("TEXT");
     }
 }
