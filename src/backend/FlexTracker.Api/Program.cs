@@ -1,4 +1,5 @@
 using FlexTracker.Infrastructure.Persistence;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,20 +33,14 @@ static void EnsureSqliteDirectoryExists(string? connectionString)
         return;
     }
 
-    const string prefix = "Data Source=";
-    var start = connectionString.IndexOf(prefix, StringComparison.OrdinalIgnoreCase);
-    if (start < 0)
+    var builder = new SqliteConnectionStringBuilder(connectionString);
+    var dataSource = builder.DataSource;
+    if (string.IsNullOrWhiteSpace(dataSource))
     {
         return;
     }
 
-    var path = connectionString[(start + prefix.Length)..].Trim();
-    if (path.Length == 0 || path.Contains(":", StringComparison.Ordinal) && Path.IsPathRooted(path))
-    {
-        // Absolute path or empty; still attempt to ensure directory if applicable.
-    }
-
-    var directory = Path.GetDirectoryName(path);
+    var directory = Path.GetDirectoryName(dataSource);
     if (string.IsNullOrWhiteSpace(directory))
     {
         return;
