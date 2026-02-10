@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\\FlexTracker.Domain\\FlexTracker.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
