@@ -10,7 +10,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Default");
-    EnsureSqliteDirectoryExists(connectionString);
+    CheckSqLiteDirectory(connectionString);
     options.UseSqlite(connectionString);
 });
 
@@ -26,25 +26,19 @@ app.UseHttpsRedirection();
 
 app.Run();
 
-static void EnsureSqliteDirectoryExists(string? connectionString)
+static void CheckSqLiteDirectory(string? connectionString)
 {
     if (string.IsNullOrWhiteSpace(connectionString))
-    {
         return;
-    }
 
     var builder = new SqliteConnectionStringBuilder(connectionString);
     var dataSource = builder.DataSource;
     if (string.IsNullOrWhiteSpace(dataSource))
-    {
         return;
-    }
 
     var directory = Path.GetDirectoryName(dataSource);
     if (string.IsNullOrWhiteSpace(directory))
-    {
         return;
-    }
 
     Directory.CreateDirectory(directory);
 }
