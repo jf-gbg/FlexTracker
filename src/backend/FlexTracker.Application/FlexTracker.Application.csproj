@@ -10,4 +10,8 @@
     <ProjectReference Include="..\\FlexTracker.Domain\\FlexTracker.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.40.0" />
+  </ItemGroup>
+
 </Project>

@@ -31,7 +31,7 @@ public sealed class TimeEntryRepository : ITimeEntryRepository
         return dbo.Id;
     }
 
-    public async Task<IReadOnlyList<OverlapInfo>> FindOverlapsAsync(
+    public async Task<bool> HasOverlapAsync(
         DateOnly date,
         TimeOnly startTime,
         TimeOnly endTime,
@@ -39,7 +39,6 @@ public sealed class TimeEntryRepository : ITimeEntryRepository
     {
         return await _dbContext.TimeEntries
             .Where(entry => entry.Date == date && startTime < entry.EndTime && endTime > entry.StartTime)
-            .Select(entry => new OverlapInfo(entry.Id, entry.StartTime, entry.EndTime))
-            .ToListAsync(cancellationToken);
+            .AnyAsync(cancellationToken);
     }
 }

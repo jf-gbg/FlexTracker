@@ -17,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString);
 });
 builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
-builder.Services.AddScoped<TimeEntryCreator>();
+builder.Services.AddScoped<CreateTimeEntryHandler>();
 
 var app = builder.Build();
 
@@ -31,7 +31,7 @@ app.UseHttpsRedirection();
 
 app.MapPost("/time-entries", async (
     CreateTimeEntryRequestDto request,
-    TimeEntryCreator creator,
+    CreateTimeEntryHandler handler,
     CancellationToken cancellationToken) =>
 {
     var errors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
@@ -82,18 +82,18 @@ app.MapPost("/time-entries", async (
         return Results.ValidationProblem(errors);
     }
 
-    var createRequest = new CreateTimeEntryRequest(
+    var command = new CreateTimeEntryCommand(
         date,
         startTime,
         endTime,
         lunchStartTime,
         lunchEndTime);
 
-    var outcome = await creator.CreateAsync(createRequest, cancellationToken);
-    if (!outcome.IsSuccess || outcome.Result is null)
+    var result = await handler.HandleAsync(command, cancellationToken);
+    if (result.IsFailure)
     {
         var domainErrors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
-        foreach (var error in outcome.Errors)
+        foreach (var error in result.Error)
         {
             AddError(domainErrors, error.Field, error.Message);
         }
@@ -101,25 +101,19 @@ app.MapPost("/time-entries", async (
         return Results.ValidationProblem(domainErrors);
     }
 
-    var result = outcome.Result;
-    var entry = result.Entry;
+    var entryResult = result.Value;
+    var entry = entryResult.Entry;
     var response = new CreateTimeEntryResponseDto(
-        result.Id,
+        entryResult.Id,
         entry.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
         entry.StartTime.ToString("HH:mm", CultureInfo.InvariantCulture),
         entry.EndTime.ToString("HH:mm", CultureInfo.InvariantCulture),
         entry.LunchStartTime?.ToString("HH:mm", CultureInfo.InvariantCulture),
         entry.LunchEndTime?.ToString("HH:mm", CultureInfo.InvariantCulture),
         entry.GetWorkedMinutes(),
-        entry.GetLunchMinutes(),
-        result.Warnings
-            .Select(warning => new TimeEntryWarningDto(
-                warning.Code,
-                warning.Message,
-                warning.OverlappingEntryIds))
-            .ToArray());
+        entry.GetLunchMinutes());
 
-    return Results.Created($"/time-entries/{result.Id}", response);
+    return Results.Created($"/time-entries/{entryResult.Id}", response);
 });
 
 app.Run();

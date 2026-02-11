@@ -1,6 +1,6 @@
 namespace FlexTracker.Application.TimeEntries;
 
-public sealed record CreateTimeEntryRequest(
+public sealed record CreateTimeEntryCommand(
     DateOnly Date,
     TimeOnly StartTime,
     TimeOnly EndTime,

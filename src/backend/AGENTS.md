@@ -37,7 +37,7 @@ Reject invalid ranges:
 - `lunchEndTime` must be after `lunchStartTime`
 - Lunch must be within work interval:
   - `startTime ≤ lunchStartTime < lunchEndTime ≤ endTime`
-- Overlapping entries are allowed but must be **flagged with a warning**, not rejected.
+- Overlapping entries are **rejected with validation errors**.
 
 ### Calculations
 - `lunchMinutes = lunchEnd - lunchStart` when lunch provided, else `0`

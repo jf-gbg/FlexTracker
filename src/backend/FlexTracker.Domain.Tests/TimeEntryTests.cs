@@ -115,4 +115,13 @@ public sealed class TimeEntryTests
         Assert.Equal(30, entry!.GetLunchMinutes());
         Assert.Equal(450, entry.GetWorkedMinutes());
     }
+
+    [Fact]
+    public void HasOverlapValidationError_ReturnsError_WhenOverlapExists()
+    {
+        var hasError = TimeEntry.HasOverlapValidationError(true, out var error);
+
+        Assert.True(hasError);
+        Assert.Equal("timeRange", error.Field);
+    }
 }

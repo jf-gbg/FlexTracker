@@ -69,6 +69,18 @@ public sealed class TimeEntry
         return new TimeEntry(date, startTime, endTime, lunchStartTime, lunchEndTime);
     }
 
+    public static bool HasOverlapValidationError(bool hasOverlap, out ValidationError error)
+    {
+        if (hasOverlap)
+        {
+            error = new ValidationError("timeRange", "Time entry overlaps an existing entry.");
+            return true;
+        }
+
+        error = default!;
+        return false;
+    }
+
     public int GetLunchMinutes()
     {
         if (!LunchStartTime.HasValue || !LunchEndTime.HasValue)

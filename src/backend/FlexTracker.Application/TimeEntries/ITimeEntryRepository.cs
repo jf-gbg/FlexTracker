@@ -6,7 +6,7 @@ public interface ITimeEntryRepository
 {
     Task<int> AddAsync(TimeEntry entry, CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<OverlapInfo>> FindOverlapsAsync(
+    Task<bool> HasOverlapAsync(
         DateOnly date,
         TimeOnly startTime,
         TimeOnly endTime,
