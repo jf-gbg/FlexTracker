@@ -4,8 +4,6 @@ This file describes how to work in the **backend** of FlexTracker: architecture 
 
 Source of truth for product/domain rules: `../../docs/product/project-brief.md`.
 
-Current backend issue tracking: `skills/CURRENT_ISSUE.md`. Reference this at the start of each backend session. Update manually when requested.
-
 ---
 
 ## Goal of the backend (Phase 0–1)
@@ -39,7 +37,7 @@ Reject invalid ranges:
 - `lunchEndTime` must be after `lunchStartTime`
 - Lunch must be within work interval:
   - `startTime ≤ lunchStartTime < lunchEndTime ≤ endTime`
-- Overlapping entries are **rejected with validation errors**.
+- Overlapping entries are allowed but must be **flagged with a warning**, not rejected.
 
 ### Calculations
 - `lunchMinutes = lunchEnd - lunchStart` when lunch provided, else `0`
