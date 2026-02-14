@@ -17,7 +17,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\FlexTracker.Infrastructure\FlexTracker.Infrastructure.csproj" />
-        <ProjectReference Include="..\FlexTracker.Application\FlexTracker.Application.csproj" />
     </ItemGroup>
 
 </Project>
