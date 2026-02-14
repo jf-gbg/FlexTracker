@@ -1,4 +1,6 @@
-namespace FlexTracker.Domain;
+using FlexTracker.Domain.Helpers;
+
+namespace FlexTracker.Domain.Entities;
 
 public sealed class TimeEntry
 {
@@ -30,6 +32,20 @@ public sealed class TimeEntry
         TimeOnly? lunchEndTime,
         out IReadOnlyList<ValidationError> errors)
     {
+        errors = Validate(startTime, endTime, lunchStartTime, lunchEndTime);
+
+        if (errors.Count > 0)
+            return null;
+
+        return new TimeEntry(date, startTime, endTime, lunchStartTime, lunchEndTime);
+    }
+
+    private static IReadOnlyList<ValidationError> Validate(
+        TimeOnly startTime,
+        TimeOnly endTime,
+        TimeOnly? lunchStartTime,
+        TimeOnly? lunchEndTime)
+    {
         var validationErrors = new List<ValidationError>();
 
         if (endTime <= startTime)
@@ -59,14 +75,7 @@ public sealed class TimeEntry
             }
         }
 
-        if (validationErrors.Count > 0)
-        {
-            errors = validationErrors;
-            return null;
-        }
-
-        errors = Array.Empty<ValidationError>();
-        return new TimeEntry(date, startTime, endTime, lunchStartTime, lunchEndTime);
+        return validationErrors;
     }
 
     public static bool HasOverlapValidationError(bool hasOverlap, out ValidationError error)

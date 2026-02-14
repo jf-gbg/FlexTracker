@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
-using FlexTracker.Domain;
+using FlexTracker.Domain.Entities;
+using FlexTracker.Domain.Helpers;
 
 namespace FlexTracker.Application.TimeEntries;
 
@@ -25,9 +26,7 @@ public sealed class CreateTimeEntryHandler
             out var errors);
 
         if (entry is null)
-        {
             return Result.Failure<CreateTimeEntryResult, IReadOnlyList<ValidationError>>(errors);
-        }
 
         var hasOverlap = await _repository.HasOverlapAsync(
             command.Date,
@@ -36,10 +35,8 @@ public sealed class CreateTimeEntryHandler
             cancellationToken);
 
         if (TimeEntry.HasOverlapValidationError(hasOverlap, out var overlapError))
-        {
             return Result.Failure<CreateTimeEntryResult, IReadOnlyList<ValidationError>>(
                 new[] { overlapError });
-        }
 
         var id = await _repository.AddAsync(entry, cancellationToken);
         var result = new CreateTimeEntryResult(id, entry);

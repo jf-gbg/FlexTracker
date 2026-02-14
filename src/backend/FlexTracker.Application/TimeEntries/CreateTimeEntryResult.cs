@@ -1,4 +1,5 @@
 using FlexTracker.Domain;
+using FlexTracker.Domain.Entities;
 
 namespace FlexTracker.Application.TimeEntries;
 

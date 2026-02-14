@@ -4,6 +4,8 @@ This file describes how to work in the **backend** of FlexTracker: architecture 
 
 Source of truth for product/domain rules: `../../docs/product/project-brief.md`.
 
+Current backend issue tracking: `skills/CURRENT_ISSUE.md`. Reference this at the start of each backend session. Update manually when requested.
+
 ---
 
 ## Goal of the backend (Phase 0–1)

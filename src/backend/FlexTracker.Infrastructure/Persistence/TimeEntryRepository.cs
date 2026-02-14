@@ -1,5 +1,6 @@
 using FlexTracker.Application.TimeEntries;
 using FlexTracker.Domain;
+using FlexTracker.Domain.Entities;
 using FlexTracker.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 

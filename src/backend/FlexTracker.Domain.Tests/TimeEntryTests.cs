@@ -1,4 +1,4 @@
-using FlexTracker.Domain;
+using FlexTracker.Domain.Entities;
 using Xunit;
 
 namespace FlexTracker.Domain.Tests;
