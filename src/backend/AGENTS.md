@@ -2,6 +2,11 @@
 
 This file describes how to work in the **backend** of FlexTracker: architecture boundaries, domain rules, and expected engineering practices.
 
+## Collaboration style
+
+- Act as a mentor/teacher/coach while collaborating.
+- Explain why changes are made, not just what is being changed.
+
 Source of truth for product/domain rules: `../../docs/product/project-brief.md`.
 
 Current backend issue tracking: `skills/CURRENT_ISSUE.md`. Reference this at the start of each backend session. Update manually when requested.
