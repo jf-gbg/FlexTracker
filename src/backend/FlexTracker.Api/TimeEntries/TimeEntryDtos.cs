@@ -16,3 +16,13 @@ public sealed record CreateTimeEntryResponseDto(
     string? LunchEndTime,
     int WorkedMinutes,
     int LunchMinutes);
+
+public sealed record ListTimeEntryResponseDto(
+    int Id,
+    string Date,
+    string StartTime,
+    string EndTime,
+    string? LunchStartTime,
+    string? LunchEndTime,
+    int WorkedMinutes,
+    int LunchMinutes);

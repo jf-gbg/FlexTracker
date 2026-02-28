@@ -1,23 +1,15 @@
 # Current Backend Issue
 
 Current issue:
-- Implement API support for creating a manual time entry.
+- Implement API support for listing existing time entries.
 - Acceptance Criteria:
-- POST /time-entries endpoint exists
-- Accepts:
-- date
-- start time (HH:MM)
-- end time (HH:MM)
-- lunch start time (HH:MM, optional)
-- lunch end time (HH:MM, optional)
-- Validates input formats
-- Business rules enforced:
-- end time must be after start time
-- if lunch start is provided, lunch end must also be provided (and vice versa)
-- lunch interval must be within work interval
-- lunch end must be after lunch start
-- Returns structured validation errors (ProblemDetails / ValidationProblemDetails)
-- Valid request persists entry and returns created resource with id
+- GET /time-entries endpoint exists
+- Returns persisted entries
+- Ordering is deterministic (e.g. date desc, start time desc)
+
+Scope:
+- Phase 0 / walking skeleton.
+- No features beyond manual time entry.
 
 Last updated:
-- 2026-02-14
+- 2026-02-15

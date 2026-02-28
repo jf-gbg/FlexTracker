@@ -1,9 +1,11 @@
+using FlexTracker.Domain.Contracts;
 using FlexTracker.Domain.Helpers;
 
 namespace FlexTracker.Domain.Entities;
 
-public sealed class TimeEntry
+public class TimeEntry
 {
+    public int Id { get; }
     public DateOnly Date { get; }
     public TimeOnly StartTime { get; }
     public TimeOnly EndTime { get; }
@@ -22,6 +24,16 @@ public sealed class TimeEntry
         EndTime = endTime;
         LunchStartTime = lunchStartTime;
         LunchEndTime = lunchEndTime;
+    }
+    
+    public TimeEntry(ITimeEntryData data)
+    {
+        Id = data.Id;
+        Date = data.Date;
+        StartTime = data.StartTime;
+        EndTime = data.EndTime;
+        LunchStartTime = data.LunchStartTime;
+        LunchEndTime = data.LunchEndTime;
     }
 
     public static TimeEntry? Create(

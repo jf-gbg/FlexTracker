@@ -31,6 +31,17 @@ public sealed class TimeEntryRepository : ITimeEntryRepository
         return dbo.Id;
     }
 
+    public async Task<IReadOnlyList<TimeEntry>> ListAsync(CancellationToken cancellationToken)
+    {
+        return await _dbContext.TimeEntries
+            .AsNoTracking()
+            .OrderByDescending(entry => entry.Date)
+            .ThenByDescending(entry => entry.StartTime)
+            .ThenByDescending(entry => entry.Id)
+            .Select(entry => new TimeEntry(entry))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> HasOverlapAsync(
         DateOnly date,
         TimeOnly startTime,
