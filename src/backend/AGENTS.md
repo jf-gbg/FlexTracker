@@ -66,6 +66,8 @@ Recommended layering (names may vary by solution layout):
 Principles:
 - Validation that expresses business invariants belongs in Domain (or Application when cross-aggregate).
 - API layer should translate errors to HTTP responses; do not duplicate business rules there.
+- `Contracts` folders are interface-only. Do not place enums, records, classes, or other concrete types there unless explicitly requested.
+- Place shared concrete types (enums/value objects/error descriptors) in a dedicated non-contract namespace/folder (for example `Domain/Validation`, `Domain/Errors`, or `Application/Common` as appropriate).
 
 ---
 
@@ -86,6 +88,9 @@ Principles:
 
 - SQLite for local-first development.
 - EF Core migrations used and committed.
+- SQLite is a development detail only; backend logic must remain portable to other database providers.
+- Do **not** handle provider-specific exception types/messages in Application, Domain, or API layers.
+- Infrastructure must translate provider/database errors into provider-agnostic domain/application outcomes (e.g., typed results or domain-level error contracts), so switching databases does not require rewriting business logic.
 - Store times in a way that preserves intent:
   - Prefer `DateOnly` for date and `TimeOnly` for times in domain.
   - Map to DB types explicitly in EF configuration.

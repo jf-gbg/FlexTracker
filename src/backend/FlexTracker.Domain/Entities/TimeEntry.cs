@@ -1,4 +1,4 @@
-using FlexTracker.Domain.Helpers;
+using FlexTracker.Domain.Validation;
 
 namespace FlexTracker.Domain.Entities;
 
@@ -97,18 +97,6 @@ public class TimeEntry
         }
 
         return validationErrors;
-    }
-
-    public static bool HasOverlapValidationError(bool hasOverlap, out ValidationError error)
-    {
-        if (hasOverlap)
-        {
-            error = new ValidationError("timeRange", "Time entry overlaps an existing entry.");
-            return true;
-        }
-
-        error = default!;
-        return false;
     }
 
     public int GetLunchMinutes()

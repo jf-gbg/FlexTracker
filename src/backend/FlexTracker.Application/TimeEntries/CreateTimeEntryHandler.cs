@@ -1,12 +1,17 @@
 using CSharpFunctionalExtensions;
-using FlexTracker.Domain.Contracts;
+using FlexTracker.Application.Common.Errors;
+using FlexTracker.Application.Contracts;
 using FlexTracker.Domain.Entities;
-using FlexTracker.Domain.Helpers;
+using FlexTracker.Domain.Validation;
 
 namespace FlexTracker.Application.TimeEntries;
 
 public sealed class CreateTimeEntryHandler
 {
+    private static readonly ValidationError OverlapError = new(
+        "timeRange",
+        "Time entry overlaps an existing entry.");
+
     private readonly ITimeEntryRepository _repository;
 
     public CreateTimeEntryHandler(ITimeEntryRepository repository)
@@ -35,11 +40,16 @@ public sealed class CreateTimeEntryHandler
             command.EndTime,
             cancellationToken);
 
-        if (TimeEntry.HasOverlapValidationError(hasOverlap, out var overlapError))
+        if (hasOverlap)
             return Result.Failure<CreateTimeEntryResult, IReadOnlyList<ValidationError>>(
-                new[] { overlapError });
+                new[] { OverlapError });
 
-        var id = await _repository.AddAsync(entry, cancellationToken);
+        var addResult = await _repository.AddAsync(entry, cancellationToken);
+        if (addResult.IsFailure && addResult.Error == PersistenceError.Overlap)
+            return Result.Failure<CreateTimeEntryResult, IReadOnlyList<ValidationError>>(
+                new[] { OverlapError });
+
+        var id = addResult.Value;
         var result = new CreateTimeEntryResult(id, entry);
 
         return Result.Success<CreateTimeEntryResult, IReadOnlyList<ValidationError>>(result);

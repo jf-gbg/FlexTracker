@@ -1,4 +1,4 @@
-using FlexTracker.Domain.Contracts;
+using FlexTracker.Application.Contracts;
 
 namespace FlexTracker.Application.TimeEntries;
 

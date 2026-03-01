@@ -117,15 +117,6 @@ public sealed class TimeEntryTests
     }
 
     [Fact]
-    public void HasOverlapValidationError_ReturnsError_WhenOverlapExists()
-    {
-        var hasError = TimeEntry.HasOverlapValidationError(true, out var error);
-
-        Assert.True(hasError);
-        Assert.Equal("timeRange", error.Field);
-    }
-
-    [Fact]
     public void Rehydrate_Sets_Id_And_ComputedValues()
     {
         var entry = TimeEntry.Rehydrate(

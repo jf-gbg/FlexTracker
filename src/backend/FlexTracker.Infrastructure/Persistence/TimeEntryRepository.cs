@@ -1,4 +1,6 @@
-using FlexTracker.Domain.Contracts;
+using CSharpFunctionalExtensions;
+using FlexTracker.Application.Common.Errors;
+using FlexTracker.Application.Contracts;
 using FlexTracker.Domain.Entities;
 using FlexTracker.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +16,10 @@ public sealed class TimeEntryRepository : ITimeEntryRepository
         _dbContext = dbContext;
     }
 
-    public async Task<int> AddAsync(TimeEntry entry, CancellationToken cancellationToken)
+    public async Task<Result<int, PersistenceError>> AddAsync(TimeEntry entry, CancellationToken cancellationToken)
     {
+        const string overlapErrorToken = "FT_OVERLAP_TIME_ENTRY";
+
         var dbo = new TimeEntryDbo
         {
             Date = entry.Date,
@@ -24,11 +28,18 @@ public sealed class TimeEntryRepository : ITimeEntryRepository
             LunchStartTime = entry.LunchStartTime,
             LunchEndTime = entry.LunchEndTime
         };
+        try
+        {
+            _dbContext.TimeEntries.Add(dbo);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException exception) when (
+            ContainsExceptionMessage(exception, overlapErrorToken))
+        {
+            return Result.Failure<int, PersistenceError>(PersistenceError.Overlap);
+        }
 
-        _dbContext.TimeEntries.Add(dbo);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return dbo.Id;
+        return Result.Success<int, PersistenceError>(dbo.Id);
     }
 
     public async Task<IReadOnlyList<TimeEntry>> ListAsync(CancellationToken cancellationToken)
@@ -57,5 +68,16 @@ public sealed class TimeEntryRepository : ITimeEntryRepository
         return await _dbContext.TimeEntries
             .Where(entry => entry.Date == date && startTime < entry.EndTime && endTime > entry.StartTime)
             .AnyAsync(cancellationToken);
+    }
+
+    private static bool ContainsExceptionMessage(Exception exception, string token)
+    {
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            if (current.Message.Contains(token, StringComparison.Ordinal))
+                return true;
+        }
+
+        return false;
     }
 }
