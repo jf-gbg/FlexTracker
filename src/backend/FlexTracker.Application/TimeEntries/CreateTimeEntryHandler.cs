@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using FlexTracker.Domain.Contracts;
 using FlexTracker.Domain.Entities;
 using FlexTracker.Domain.Helpers;
 

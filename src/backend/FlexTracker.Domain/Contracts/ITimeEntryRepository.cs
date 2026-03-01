@@ -1,6 +1,6 @@
 using FlexTracker.Domain.Entities;
 
-namespace FlexTracker.Application.TimeEntries;
+namespace FlexTracker.Domain.Contracts;
 
 public interface ITimeEntryRepository
 {

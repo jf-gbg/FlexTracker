@@ -1,4 +1,3 @@
-using FlexTracker.Domain.Contracts;
 using FlexTracker.Domain.Helpers;
 
 namespace FlexTracker.Domain.Entities;
@@ -13,27 +12,19 @@ public class TimeEntry
     public TimeOnly? LunchEndTime { get; }
 
     private TimeEntry(
+        int id,
         DateOnly date,
         TimeOnly startTime,
         TimeOnly endTime,
         TimeOnly? lunchStartTime,
         TimeOnly? lunchEndTime)
     {
+        Id = id;
         Date = date;
         StartTime = startTime;
         EndTime = endTime;
         LunchStartTime = lunchStartTime;
         LunchEndTime = lunchEndTime;
-    }
-    
-    public TimeEntry(ITimeEntryData data)
-    {
-        Id = data.Id;
-        Date = data.Date;
-        StartTime = data.StartTime;
-        EndTime = data.EndTime;
-        LunchStartTime = data.LunchStartTime;
-        LunchEndTime = data.LunchEndTime;
     }
 
     public static TimeEntry? Create(
@@ -49,7 +40,25 @@ public class TimeEntry
         if (errors.Count > 0)
             return null;
 
-        return new TimeEntry(date, startTime, endTime, lunchStartTime, lunchEndTime);
+        return new TimeEntry(0, date, startTime, endTime, lunchStartTime, lunchEndTime);
+    }
+
+    public static TimeEntry Rehydrate(
+        int id,
+        DateOnly date,
+        TimeOnly startTime,
+        TimeOnly endTime,
+        TimeOnly? lunchStartTime,
+        TimeOnly? lunchEndTime)
+    {
+        if (id <= 0)
+            throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than zero.");
+
+        var errors = Validate(startTime, endTime, lunchStartTime, lunchEndTime);
+        if (errors.Count > 0)
+            throw new InvalidOperationException("Cannot rehydrate invalid time entry data.");
+
+        return new TimeEntry(id, date, startTime, endTime, lunchStartTime, lunchEndTime);
     }
 
     private static IReadOnlyList<ValidationError> Validate(

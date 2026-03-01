@@ -1,5 +1,6 @@
 using FlexTracker.Api.TimeEntries;
 using FlexTracker.Application.TimeEntries;
+using FlexTracker.Domain.Contracts;
 using FlexTracker.Infrastructure.Persistence;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

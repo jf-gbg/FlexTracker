@@ -1,4 +1,4 @@
-using FlexTracker.Application.TimeEntries;
+using FlexTracker.Domain.Contracts;
 using FlexTracker.Domain.Entities;
 using FlexTracker.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +38,13 @@ public sealed class TimeEntryRepository : ITimeEntryRepository
             .OrderByDescending(entry => entry.Date)
             .ThenByDescending(entry => entry.StartTime)
             .ThenByDescending(entry => entry.Id)
-            .Select(entry => new TimeEntry(entry))
+            .Select(entry => TimeEntry.Rehydrate(
+                entry.Id,
+                entry.Date,
+                entry.StartTime,
+                entry.EndTime,
+                entry.LunchStartTime,
+                entry.LunchEndTime))
             .ToListAsync(cancellationToken);
     }
 

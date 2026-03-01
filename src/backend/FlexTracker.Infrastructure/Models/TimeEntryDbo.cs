@@ -1,8 +1,6 @@
-using FlexTracker.Domain.Contracts;
-
 namespace FlexTracker.Infrastructure.Models;
 
-public class TimeEntryDbo : ITimeEntryData
+public class TimeEntryDbo
 {
     public int Id { get; set; }
     public DateOnly Date { get; set; }

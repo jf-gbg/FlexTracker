@@ -78,7 +78,7 @@ Principles:
   - `GET /time-entries` to list (filters later)
   - `PUT/PATCH /time-entries/{id}` for edits (later)
 - Use RFC7807 **ProblemDetails** for validation errors (400).
-- Warnings (like overlaps) should be returned explicitly (e.g., `warnings: []`) rather than hidden in logs.
+- Warnings should be returned explicitly (e.g., `warnings: []`) rather than hidden in logs.
 
 ---
 
@@ -108,7 +108,7 @@ At minimum:
 - Don’t introduce complex frameworks/patterns (CQRS libraries, MediatR, event sourcing, etc.)
 - Don’t add authentication/multi-user support (Phase 1 is single-user).
 - Don’t assume fixed lunch window or fixed lunch minutes.
-- Don’t reject overlapping entries; only warn.
+- Don’t allow overlapping entries; reject them with validation errors.
 
 ---
 
@@ -127,3 +127,4 @@ A change is “done” when:
 - Calculation logic is covered by tests
 - API returns clear error messages for invalid requests
 - Behavior matches `../../docs/product/project-brief.md` rules.
+

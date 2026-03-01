@@ -1,3 +1,5 @@
+using FlexTracker.Domain.Contracts;
+
 namespace FlexTracker.Application.TimeEntries;
 
 public sealed class ListTimeEntriesHandler

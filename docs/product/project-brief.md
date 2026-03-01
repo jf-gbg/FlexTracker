@@ -54,7 +54,7 @@ Single-user only for Phase 1.
 * Lunch is optional but must be provided as a pair (both lunch start and lunch end)
 * Lunch end must be after lunch start
 * Lunch interval must be within work interval (start ≤ lunch start < lunch end ≤ end)
-* Overlapping entries are allowed but flagged with a warning
+* Overlapping entries are rejected with a validation error
 
 ### Adjustments
 
@@ -186,4 +186,5 @@ Phase 1 is complete when:
 * Multiple users
 * Reports and charts
 * Mobile-first UX
+
 

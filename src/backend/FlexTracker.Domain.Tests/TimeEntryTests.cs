@@ -124,4 +124,20 @@ public sealed class TimeEntryTests
         Assert.True(hasError);
         Assert.Equal("timeRange", error.Field);
     }
+
+    [Fact]
+    public void Rehydrate_Sets_Id_And_ComputedValues()
+    {
+        var entry = TimeEntry.Rehydrate(
+            42,
+            new DateOnly(2026, 2, 10),
+            new TimeOnly(9, 0),
+            new TimeOnly(17, 0),
+            new TimeOnly(12, 0),
+            new TimeOnly(12, 30));
+
+        Assert.Equal(42, entry.Id);
+        Assert.Equal(30, entry.GetLunchMinutes());
+        Assert.Equal(450, entry.GetWorkedMinutes());
+    }
 }
