@@ -68,6 +68,72 @@ public sealed class TimeEntryTests
     }
 
     [Fact]
+    public void UpdateTimes_Rejects_WhenExistingLunchFallsOutsideNewInterval()
+    {
+        var entry = TimeEntry.Create(
+            new DateOnly(2026, 2, 10),
+            new TimeOnly(9, 0),
+            new TimeOnly(17, 0),
+            new TimeOnly(12, 0),
+            new TimeOnly(12, 30),
+            out var createErrors);
+
+        Assert.Empty(createErrors);
+        Assert.NotNull(entry);
+
+        var errors = entry!.UpdateStartAndEndTimes(new TimeOnly(13, 0), new TimeOnly(17, 0));
+
+        Assert.Contains(errors, error => error.Field == "lunchStartTime");
+        Assert.Equal(new TimeOnly(9, 0), entry.StartTime);
+        Assert.Equal(new TimeOnly(17, 0), entry.EndTime);
+    }
+
+    [Fact]
+    public void UpdateLunchBreak_UpdatesAggregateState_WhenIntervalIsValid()
+    {
+        var entry = TimeEntry.Create(
+            new DateOnly(2026, 2, 10),
+            new TimeOnly(9, 0),
+            new TimeOnly(17, 0),
+            null,
+            null,
+            out var createErrors);
+
+        Assert.Empty(createErrors);
+        Assert.NotNull(entry);
+
+        var errors = entry!.UpdateLunchBreak(new TimeOnly(12, 0), new TimeOnly(12, 30));
+
+        Assert.Empty(errors);
+        Assert.Equal(new TimeOnly(12, 0), entry.LunchStartTime);
+        Assert.Equal(new TimeOnly(12, 30), entry.LunchEndTime);
+        Assert.Equal(30, entry.GetLunchMinutes());
+        Assert.Equal(450, entry.GetWorkedMinutes());
+    }
+
+    [Fact]
+    public void RemoveLunchBreak_ClearsLunch_AndRecomputesWorkedMinutes()
+    {
+        var entry = TimeEntry.Create(
+            new DateOnly(2026, 2, 10),
+            new TimeOnly(9, 0),
+            new TimeOnly(17, 0),
+            new TimeOnly(12, 0),
+            new TimeOnly(12, 30),
+            out var errors);
+
+        Assert.Empty(errors);
+        Assert.NotNull(entry);
+
+        entry!.RemoveLunchBreak();
+
+        Assert.Null(entry.LunchStartTime);
+        Assert.Null(entry.LunchEndTime);
+        Assert.Equal(0, entry.GetLunchMinutes());
+        Assert.Equal(480, entry.GetWorkedMinutes());
+    }
+
+    [Fact]
     public void GetLunchMinutes_ReturnsZero_WhenMissing()
     {
         var entry = TimeEntry.Create(
@@ -132,3 +198,4 @@ public sealed class TimeEntryTests
         Assert.Equal(450, entry.GetWorkedMinutes());
     }
 }
+

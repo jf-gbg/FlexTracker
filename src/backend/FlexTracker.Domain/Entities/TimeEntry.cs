@@ -1,30 +1,32 @@
 using FlexTracker.Domain.Validation;
+using FlexTracker.Domain.ValueObjects;
 
 namespace FlexTracker.Domain.Entities;
 
-public class TimeEntry
+public sealed class TimeEntry
 {
+    private const string LunchWithinWorkIntervalMessage = "Lunch must be within work interval.";
+
     public int Id { get; }
     public DateOnly Date { get; }
-    public TimeOnly StartTime { get; }
-    public TimeOnly EndTime { get; }
-    public TimeOnly? LunchStartTime { get; }
-    public TimeOnly? LunchEndTime { get; }
+    public TimeRange WorkTime { get; private set; }
+    public TimeRange? LunchBreakTime { get; private set; }
+
+    public TimeOnly StartTime => WorkTime.Start;
+    public TimeOnly EndTime => WorkTime.End;
+    public TimeOnly? LunchStartTime => LunchBreakTime?.Start;
+    public TimeOnly? LunchEndTime => LunchBreakTime?.End;
 
     private TimeEntry(
         int id,
         DateOnly date,
-        TimeOnly startTime,
-        TimeOnly endTime,
-        TimeOnly? lunchStartTime,
-        TimeOnly? lunchEndTime)
+        TimeRange workTime,
+        TimeRange? lunchBreakTime)
     {
         Id = id;
         Date = date;
-        StartTime = startTime;
-        EndTime = endTime;
-        LunchStartTime = lunchStartTime;
-        LunchEndTime = lunchEndTime;
+        WorkTime = workTime;
+        LunchBreakTime = lunchBreakTime;
     }
 
     public static TimeEntry? Create(
@@ -35,12 +37,41 @@ public class TimeEntry
         TimeOnly? lunchEndTime,
         out IReadOnlyList<ValidationError> errors)
     {
-        errors = Validate(startTime, endTime, lunchStartTime, lunchEndTime);
+        var validationErrors = new List<ValidationError>();
 
-        if (errors.Count > 0)
+        var hasLunchStart = lunchStartTime.HasValue;
+        var hasLunchEnd = lunchEndTime.HasValue;
+        if (hasLunchStart != hasLunchEnd)
+        {
+            validationErrors.Add(new ValidationError("lunchStartTime", "Lunch start and end must both be provided."));
+            validationErrors.Add(new ValidationError("lunchEndTime", "Lunch start and end must both be provided."));
+        }
+
+        var workTime = TimeRange.Create(startTime, endTime, out var workTimeErrors);
+        validationErrors.AddRange(workTimeErrors);
+
+        TimeRange? lunchBreakTime = null;
+        if (hasLunchStart && hasLunchEnd)
+        {
+            lunchBreakTime = TimeRange.Create(lunchStartTime!.Value, lunchEndTime!.Value, out var lunchErrors);
+            if (lunchErrors.Count > 0)
+            {
+                validationErrors.Add(new ValidationError("lunchEndTime", "Lunch end must be after lunch start."));
+            }
+        }
+
+        if (workTime is not null && lunchBreakTime is not null && !workTime.Contains(lunchBreakTime))
+        {
+            AddLunchOutsideWorkIntervalErrors(validationErrors);
+        }
+
+        errors = validationErrors;
+        if (validationErrors.Count > 0)
+        {
             return null;
+        }
 
-        return new TimeEntry(0, date, startTime, endTime, lunchStartTime, lunchEndTime);
+        return new TimeEntry(0, date, workTime!, lunchBreakTime);
     }
 
     public static TimeEntry Rehydrate(
@@ -52,66 +83,76 @@ public class TimeEntry
         TimeOnly? lunchEndTime)
     {
         if (id <= 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than zero.");
+        }
 
-        var errors = Validate(startTime, endTime, lunchStartTime, lunchEndTime);
-        if (errors.Count > 0)
+        var entry = Create(date, startTime, endTime, lunchStartTime, lunchEndTime, out _);
+        if (entry is null)
+        {
             throw new InvalidOperationException("Cannot rehydrate invalid time entry data.");
+        }
 
-        return new TimeEntry(id, date, startTime, endTime, lunchStartTime, lunchEndTime);
+        return new TimeEntry(id, entry.Date, entry.WorkTime, entry.LunchBreakTime);
     }
 
-    private static IReadOnlyList<ValidationError> Validate(
-        TimeOnly startTime,
-        TimeOnly endTime,
-        TimeOnly? lunchStartTime,
-        TimeOnly? lunchEndTime)
+    public IReadOnlyList<ValidationError> UpdateStartAndEndTimes(TimeOnly startTime, TimeOnly endTime)
     {
         var validationErrors = new List<ValidationError>();
 
-        if (endTime <= startTime)
+        var workTime = TimeRange.Create(startTime, endTime, out var workTimeErrors);
+        validationErrors.AddRange(workTimeErrors);
+
+        if (workTime is not null && LunchBreakTime is not null && !workTime.Contains(LunchBreakTime))
         {
-            validationErrors.Add(new ValidationError("endTime", "End time must be after start time."));
+            AddLunchOutsideWorkIntervalErrors(validationErrors);
         }
 
-        var hasLunchStart = lunchStartTime.HasValue;
-        var hasLunchEnd = lunchEndTime.HasValue;
-        if (hasLunchStart != hasLunchEnd)
+        if (validationErrors.Count > 0)
         {
-            validationErrors.Add(new ValidationError("lunchStartTime", "Lunch start and end must both be provided."));
-            validationErrors.Add(new ValidationError("lunchEndTime", "Lunch start and end must both be provided."));
+            return validationErrors;
         }
 
-        if (hasLunchStart && hasLunchEnd)
-        {
-            if (lunchEndTime <= lunchStartTime)
-            {
-                validationErrors.Add(new ValidationError("lunchEndTime", "Lunch end must be after lunch start."));
-            }
-
-            if (lunchStartTime < startTime || lunchEndTime > endTime)
-            {
-                validationErrors.Add(new ValidationError("lunchStartTime", "Lunch must be within work interval."));
-                validationErrors.Add(new ValidationError("lunchEndTime", "Lunch must be within work interval."));
-            }
-        }
-
-        return validationErrors;
+        WorkTime = workTime!;
+        return Array.Empty<ValidationError>();
     }
 
-    public int GetLunchMinutes()
+    public IReadOnlyList<ValidationError> UpdateLunchBreak(TimeOnly lunchStartTime, TimeOnly lunchEndTime)
     {
-        if (!LunchStartTime.HasValue || !LunchEndTime.HasValue)
+        var validationErrors = new List<ValidationError>();
+
+        var lunchBreakTime = TimeRange.Create(lunchStartTime, lunchEndTime, out var lunchErrors);
+        if (lunchErrors.Count > 0)
         {
-            return 0;
+            validationErrors.Add(new ValidationError("lunchEndTime", "Lunch end must be after lunch start."));
         }
 
-        return (int)(LunchEndTime.Value - LunchStartTime.Value).TotalMinutes;
+        if (lunchBreakTime is not null && !WorkTime.Contains(lunchBreakTime))
+        {
+            AddLunchOutsideWorkIntervalErrors(validationErrors);
+        }
+
+        if (validationErrors.Count > 0)
+        {
+            return validationErrors;
+        }
+
+        LunchBreakTime = lunchBreakTime;
+        return Array.Empty<ValidationError>();
     }
 
-    public int GetWorkedMinutes()
+    public void RemoveLunchBreak()
     {
-        var workedMinutes = (int)(EndTime - StartTime).TotalMinutes;
-        return workedMinutes - GetLunchMinutes();
+        LunchBreakTime = null;
+    }
+
+    public int GetLunchMinutes() => LunchBreakTime?.DurationMinutes ?? 0;
+
+    public int GetWorkedMinutes() => WorkTime.DurationMinutes - GetLunchMinutes();
+
+    private static void AddLunchOutsideWorkIntervalErrors(ICollection<ValidationError> validationErrors)
+    {
+        validationErrors.Add(new ValidationError("lunchStartTime", LunchWithinWorkIntervalMessage));
+        validationErrors.Add(new ValidationError("lunchEndTime", LunchWithinWorkIntervalMessage));
     }
 }
