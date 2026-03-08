@@ -6,6 +6,8 @@ This file describes how to work in the **backend** of FlexTracker: architecture 
 
 - Act as a mentor/teacher/coach while collaborating.
 - Explain why changes are made, not just what is being changed.
+- If a requested or proposed change would go against the documented repository structure or architecture, explicitly notify the user before making the change.
+- In that situation, explain the conflict, why the deviation may be needed, and wait for explicit approval before proceeding.
 
 Source of truth for product/domain rules: `../../docs/product/project-brief.md`.
 
@@ -34,7 +36,7 @@ Backend must enforce validation and calculation rules close to the domain.
 - `lunchStartTime` (optional)
 - `lunchEndTime` (optional)
 - `comment` (optional, planned; not yet implemented in the initial schema/model)
-- Manual adjustments exist as a later epic; don’t design away history.
+- Manual adjustments exist as a later epic; don't design away history.
 
 ### Validation rules
 Reject invalid ranges:
@@ -43,7 +45,7 @@ Reject invalid ranges:
   - if `lunchStartTime` exists then `lunchEndTime` must exist (and vice versa)
 - `lunchEndTime` must be after `lunchStartTime`
 - Lunch must be within work interval:
-  - `startTime ≤ lunchStartTime < lunchEndTime ≤ endTime`
+  - `startTime <= lunchStartTime < lunchEndTime <= endTime`
 - Overlapping entries are **rejected with validation errors**.
 
 ### Calculations
@@ -68,6 +70,7 @@ Principles:
 - API layer should translate errors to HTTP responses; do not duplicate business rules there.
 - `Contracts` folders are interface-only. Do not place enums, records, classes, or other concrete types there unless explicitly requested.
 - Place shared concrete types (enums/value objects/error descriptors) in a dedicated non-contract namespace/folder (for example `Domain/Validation`, `Domain/Errors`, or `Application/Common` as appropriate).
+- Before making any structural change that conflicts with this documented layering or with repository architecture documentation, stop and make the user aware of the conflict first.
 
 ---
 
@@ -103,17 +106,17 @@ At minimum:
 - Unit tests for:
   - validation rules
   - worked-minutes and lunch-minutes calculations
-- Tests should not depend on ASP.NET hosting or EF unless it’s an intentional integration test.
+- Tests should not depend on ASP.NET hosting or EF unless it's an intentional integration test.
 - Keep tests deterministic and fast.
 
 ---
 
 ## Changes Codex should NOT do without explicit request
 
-- Don’t introduce complex frameworks/patterns (CQRS libraries, MediatR, event sourcing, etc.)
-- Don’t add authentication/multi-user support (Phase 1 is single-user).
-- Don’t assume fixed lunch window or fixed lunch minutes.
-- Don’t allow overlapping entries; reject them with validation errors.
+- Don't introduce complex frameworks/patterns (CQRS libraries, MediatR, event sourcing, etc.)
+- Don't add authentication/multi-user support (Phase 1 is single-user).
+- Don't assume fixed lunch window or fixed lunch minutes.
+- Don't allow overlapping entries; reject them with validation errors.
 
 ---
 
@@ -127,9 +130,8 @@ At minimum:
 
 ## Definition of done for a backend change
 
-A change is “done” when:
+A change is "done" when:
 - Validation rules are enforced consistently
 - Calculation logic is covered by tests
 - API returns clear error messages for invalid requests
 - Behavior matches `../../docs/product/project-brief.md` rules.
-
