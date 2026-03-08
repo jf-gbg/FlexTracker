@@ -1,4 +1,4 @@
-﻿# ARCHITECTURE.md — FlexTracker Domain Model
+# ARCHITECTURE.md — FlexTracker Domain Model
 
 This document defines the core domain architecture used by FlexTracker. It describes the current bounded context, domain model, and invariants that must be preserved when implementing new features.
 
@@ -8,11 +8,11 @@ FlexTracker is a work-time tracking system. The domain model represents manually
 
 The system currently contains a single bounded context named TimeTracking. All domain concepts implemented so far belong to this bounded context. In the future the system may introduce additional contexts such as Reporting, Exports, or Payroll Integration, but those contexts do not yet exist.
 
-Within the TimeTracking bounded context the primary aggregate is WorkEntry.
+Within the TimeTracking bounded context the primary aggregate is TimeEntry.
 
-A WorkEntry represents a single recorded work interval for a specific date. The WorkEntry aggregate is responsible for enforcing all invariants that ensure the recorded data is valid and internally consistent.
+A TimeEntry represents a single recorded work interval for a specific date. The TimeEntry aggregate is responsible for enforcing all invariants that ensure the recorded data is valid and internally consistent.
 
-A WorkEntry may contain the following information:
+A TimeEntry may contain the following information:
 
 - Date
 - StartTime
@@ -20,7 +20,7 @@ A WorkEntry may contain the following information:
 - LunchStartTime (optional)
 - LunchEndTime (optional)
 
-The WorkEntry aggregate must ensure that all invariants remain valid at all times. These invariants represent business rules and must not be bypassed.
+The TimeEntry aggregate must ensure that all invariants remain valid at all times. These invariants represent business rules and must not be bypassed.
 
 The following invariants must always hold:
 
@@ -36,15 +36,15 @@ Invalid states must not be representable within the domain model.
 
 The domain model should express these rules directly rather than relying on external validation or database constraints.
 
-The WorkEntry aggregate should support domain behaviour that represents legitimate operations in the time-tracking domain. These behaviours may include:
+The TimeEntry aggregate should support domain behaviour that represents legitimate operations in the time-tracking domain. These behaviours may include:
 
-CreateWorkEntry  
-UpdateWorkEntryTimes  
+CreateTimeEntry  
+UpdateTimeEntryTimes  
 AddLunchBreak  
 RemoveLunchBreak  
 CalculateWorkedMinutes
 
-Operations that enforce invariants should be implemented within the aggregate root so that the WorkEntry always remains in a valid state.
+Operations that enforce invariants should be implemented within the aggregate root so that the TimeEntry always remains in a valid state.
 
 The domain model should also use value objects to represent concepts that have value semantics rather than identity.
 
@@ -68,7 +68,7 @@ LunchOutsideWorkIntervalError
 
 These errors should clearly describe which invariant was violated and why.
 
-Persistence concerns must remain separate from the domain model. Database representations of entities should exist only within the Infrastructure layer. For example, a persistence model such as WorkEntryRecord may represent how a work entry is stored in the database.
+Persistence concerns must remain separate from the domain model. Database representations of entities should exist only within the Infrastructure layer. For example, a persistence model such as TimeEntryRecord may represent how a work entry is stored in the database.
 
 Persistence models are not domain entities. They exist purely to represent the database schema and should be mapped to domain models by infrastructure components such as repositories.
 
@@ -76,10 +76,10 @@ The Application layer implements use cases that orchestrate domain operations. T
 
 Typical use cases in the current system include:
 
-CreateWorkEntry  
-UpdateWorkEntry  
+CreateTimeEntry  
+UpdateTimeEntry  
 AddLunchBreak  
-GetWorkEntries  
+GetTimeEntries  
 GetWeeklySummary
 
 Application handlers coordinate domain operations and repository calls but should not implement domain invariants themselves.
@@ -89,3 +89,4 @@ Time calculations are a critical aspect of the system. All calculations must be 
 Worked time must always be derivable from the recorded timestamps and defined business rules.
 
 The architecture of FlexTracker prioritises explicit domain modelling, clear invariants, testable business logic, and maintainable system structure. The domain model must remain independent of infrastructure technologies and frameworks so that the business rules remain stable even if persistence mechanisms or external interfaces change.
+
