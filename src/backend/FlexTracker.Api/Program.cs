@@ -1,6 +1,6 @@
 using FlexTracker.Api.TimeEntries;
-using FlexTracker.Application.Contracts;
 using FlexTracker.Application.TimeEntries;
+using FlexTracker.Domain.TimeEntries;
 using FlexTracker.Infrastructure.Persistence;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString);
 });
 builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
-builder.Services.AddScoped<CreateTimeEntryHandler>();
-builder.Services.AddScoped<ListTimeEntriesHandler>();
+builder.Services.AddScoped<TimeEntryService>();
 
 var app = builder.Build();
 
@@ -31,7 +30,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapTimeEntryEndpoints();
 
-app.Run();
+await app.RunAsync();
 
 static void CheckSqLiteDirectory(string? connectionString)
 {

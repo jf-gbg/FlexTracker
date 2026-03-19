@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\\FlexTracker.Application\\FlexTracker.Application.csproj" />
     <ProjectReference Include="..\\FlexTracker.Domain\\FlexTracker.Domain.csproj" />
+    <ProjectReference Include="..\\FlexTracker.Infrastructure\\FlexTracker.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

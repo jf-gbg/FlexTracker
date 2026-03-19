@@ -1,7 +1,7 @@
 using FlexTracker.Domain.Validation;
 using FlexTracker.Domain.ValueObjects;
 
-namespace FlexTracker.Domain.Entities;
+namespace FlexTracker.Domain.TimeEntries;
 
 public sealed class TimeEntry
 {
