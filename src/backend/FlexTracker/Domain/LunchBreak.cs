@@ -16,4 +16,6 @@ public sealed class LunchBreak
     public TimeOnly StartTime { get; }
 
     public TimeOnly EndTime { get; }
+
+    public TimeSpan Duration => EndTime - StartTime;
 }

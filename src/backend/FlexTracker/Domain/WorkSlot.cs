@@ -27,4 +27,16 @@ public sealed class WorkSlot
     public TimeOnly EndTime { get; }
 
     public LunchBreak? LunchBreak { get; }
+
+    public TimeSpan GetWorkedDuration()
+    {
+        var workedDuration = EndTime - StartTime;
+
+        if (LunchBreak is not null)
+        {
+            workedDuration -= LunchBreak.Duration;
+        }
+
+        return workedDuration;
+    }
 }
