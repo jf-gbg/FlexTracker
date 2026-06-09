@@ -1,5 +1,4 @@
 using FlexTracker.Domain.Validation;
-using FlexTracker.Domain.ValueObjects;
 
 namespace FlexTracker.Domain.TimeEntries;
 
@@ -146,9 +145,9 @@ public sealed class TimeEntry
         LunchBreakTime = null;
     }
 
-    public int GetLunchMinutes() => LunchBreakTime?.DurationMinutes ?? 0;
+    public int LunchMinutes => LunchBreakTime?.DurationMinutes ?? 0;
 
-    public int GetWorkedMinutes() => WorkTime.DurationMinutes - GetLunchMinutes();
+    public int WorkedMinutes => WorkTime.DurationMinutes - LunchMinutes;
 
     private static void AddLunchOutsideWorkIntervalErrors(ICollection<ValidationError> validationErrors)
     {

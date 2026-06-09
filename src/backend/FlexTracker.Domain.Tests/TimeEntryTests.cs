@@ -107,8 +107,8 @@ public sealed class TimeEntryTests
         Assert.Empty(errors);
         Assert.Equal(new TimeOnly(12, 0), entry.LunchStartTime);
         Assert.Equal(new TimeOnly(12, 30), entry.LunchEndTime);
-        Assert.Equal(30, entry.GetLunchMinutes());
-        Assert.Equal(450, entry.GetWorkedMinutes());
+        Assert.Equal(30, entry.LunchMinutes);
+        Assert.Equal(450, entry.WorkedMinutes);
     }
 
     [Fact]
@@ -129,12 +129,12 @@ public sealed class TimeEntryTests
 
         Assert.Null(entry.LunchStartTime);
         Assert.Null(entry.LunchEndTime);
-        Assert.Equal(0, entry.GetLunchMinutes());
-        Assert.Equal(480, entry.GetWorkedMinutes());
+        Assert.Equal(0, entry.LunchMinutes);
+        Assert.Equal(480, entry.WorkedMinutes);
     }
 
     [Fact]
-    public void GetLunchMinutes_ReturnsZero_WhenMissing()
+    public void LunchMinutes_ReturnsZero_WhenMissing()
     {
         var entry = TimeEntry.Create(
             new DateOnly(2026, 2, 10),
@@ -146,11 +146,11 @@ public sealed class TimeEntryTests
 
         Assert.Empty(errors);
         Assert.NotNull(entry);
-        Assert.Equal(0, entry!.GetLunchMinutes());
+        Assert.Equal(0, entry!.LunchMinutes);
     }
 
     [Fact]
-    public void GetWorkedMinutes_NoLunch()
+    public void WorkedMinutes_NoLunch()
     {
         var entry = TimeEntry.Create(
             new DateOnly(2026, 2, 10),
@@ -162,11 +162,11 @@ public sealed class TimeEntryTests
 
         Assert.Empty(errors);
         Assert.NotNull(entry);
-        Assert.Equal(480, entry!.GetWorkedMinutes());
+        Assert.Equal(480, entry!.WorkedMinutes);
     }
 
     [Fact]
-    public void GetWorkedMinutes_WithLunch()
+    public void WorkedMinutes_WithLunch()
     {
         var entry = TimeEntry.Create(
             new DateOnly(2026, 2, 10),
@@ -178,8 +178,8 @@ public sealed class TimeEntryTests
 
         Assert.Empty(errors);
         Assert.NotNull(entry);
-        Assert.Equal(30, entry!.GetLunchMinutes());
-        Assert.Equal(450, entry.GetWorkedMinutes());
+        Assert.Equal(30, entry!.LunchMinutes);
+        Assert.Equal(450, entry.WorkedMinutes);
     }
 
     [Fact]
@@ -194,8 +194,8 @@ public sealed class TimeEntryTests
             new TimeOnly(12, 30));
 
         Assert.Equal(42, entry.Id);
-        Assert.Equal(30, entry.GetLunchMinutes());
-        Assert.Equal(450, entry.GetWorkedMinutes());
+        Assert.Equal(30, entry.LunchMinutes);
+        Assert.Equal(450, entry.WorkedMinutes);
     }
 }
 

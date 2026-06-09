@@ -38,8 +38,8 @@ public static class TimeEntryEndpoints
                 entry.EndTime.ToString(TidFormat, CultureInfo.InvariantCulture),
                 entry.LunchStartTime?.ToString(TidFormat, CultureInfo.InvariantCulture),
                 entry.LunchEndTime?.ToString(TidFormat, CultureInfo.InvariantCulture),
-                entry.GetWorkedMinutes(),
-                entry.GetLunchMinutes());
+                entry.WorkedMinutes,
+                entry.LunchMinutes);
 
             return Results.Created($"/time-entries/{entry.Id}", response);
         });
@@ -56,8 +56,8 @@ public static class TimeEntryEndpoints
                     entry.EndTime.ToString(TidFormat, CultureInfo.InvariantCulture),
                     entry.LunchStartTime?.ToString(TidFormat, CultureInfo.InvariantCulture),
                     entry.LunchEndTime?.ToString(TidFormat, CultureInfo.InvariantCulture),
-                    entry.GetWorkedMinutes(),
-                    entry.GetLunchMinutes()))
+                    entry.WorkedMinutes,
+                    entry.LunchMinutes))
                 .ToList();
 
             return Results.Ok(response);

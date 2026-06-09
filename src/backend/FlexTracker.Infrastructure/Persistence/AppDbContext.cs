@@ -15,6 +15,15 @@ public sealed class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new Configurations.TimeEntryConfiguration());
+        modelBuilder.Entity<TimeEntryDbo>(builder =>
+        {
+            builder.ToTable("TimeEntries");
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Date).HasColumnType("TEXT");
+            builder.Property(x => x.StartTime).HasColumnType("TEXT");
+            builder.Property(x => x.EndTime).HasColumnType("TEXT");
+            builder.Property(x => x.LunchStartTime).HasColumnType("TEXT");
+            builder.Property(x => x.LunchEndTime).HasColumnType("TEXT");
+        });
     }
 }
